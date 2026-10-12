@@ -81,17 +81,6 @@ class _DeskTopBarState extends State<DeskTopBar> {
                   child: Row(
                     children: [
                       const SizedBox(width: 12),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          'assets/images/totorify_logo.png',
-                          package: 'kreate_ios',
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 18),
                       DeskIconButton(
                         icon: Icons.chevron_left_rounded,
                         tooltip: 'Indietro',

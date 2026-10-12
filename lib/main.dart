@@ -54,6 +54,11 @@ Future<void> _start() async {
     if (kDebugMode) printToConsole(message, wrapWidth: wrapWidth);
   };
 
+  // The logo on black, at once: it is what the window shows while the app
+  // gets ready, and for a moment after, so that it is seen and not flashed.
+  runApp(const _Splash());
+  final shown = Stopwatch()..start();
+
   // The player the phone app uses has no implementation for a computer:
   // this one takes its place, and the rest of the code does not notice.
   VideoPlayerMediaKit.ensureInitialized(windows: true, linux: true);
@@ -89,6 +94,8 @@ Future<void> _start() async {
   unawaited(ConnectHost.instance.apply());
 
   log.log('INIT', 'Totorify per computer pronto come "${ConnectHost.deviceName}"');
+  final left = _Splash.atLeast - shown.elapsed;
+  if (left > Duration.zero) await Future<void>.delayed(left);
   runApp(const TotorifyDesktopApp());
 }
 
@@ -100,6 +107,43 @@ String _computerName() {
     debugPrint('main._computerName: $e');
   }
   return 'Computer';
+}
+
+/// What the window shows while the app starts: the logo, on black.
+class _Splash extends StatelessWidget {
+  const _Splash();
+
+  /// How long it stays at least.
+  static const Duration atLeast = Duration(milliseconds: 1300);
+
+  @override
+  Widget build(BuildContext context) => Directionality(
+    textDirection: TextDirection.ltr,
+    child: ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 450),
+          curve: Curves.easeOut,
+          builder: (context, shown, child) => Opacity(
+            opacity: shown,
+            child: Transform.scale(scale: 0.94 + 0.06 * shown, child: child),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.asset(
+              'assets/images/totorify_logo.png',
+              package: 'kreate_ios',
+              width: 132,
+              height: 132,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class TotorifyDesktopApp extends StatefulWidget {
