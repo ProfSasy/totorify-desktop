@@ -86,9 +86,10 @@ flutter build windows --release     # oppure: flutter build linux --release
 ```
 
 Su Windows servono gli strumenti di compilazione di Visual Studio
-("Sviluppo di applicazioni desktop con C++", con il componente ATL) e
+2022 ("Sviluppo di applicazioni desktop con C++", con il componente ATL) e
 `nuget` nel percorso. Su Linux: `clang cmake ninja-build pkg-config
-libgtk-3-dev liblzma-dev libmpv-dev libsecret-1-dev libjsoncpp-dev`.
+libgtk-3-dev liblzma-dev libmpv-dev libsecret-1-dev libjsoncpp-dev
+libasound2-dev`.
 
 ## Cosa manca rispetto al telefono
 
