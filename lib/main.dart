@@ -1,0 +1,150 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui' show PlatformDispatcher, PointerDeviceKind;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:kreate_ios/main.dart' as phone;
+import 'package:kreate_ios/services/audio_handler.dart';
+import 'package:kreate_ios/services/auth_service.dart';
+import 'package:kreate_ios/services/canvas_service.dart';
+import 'package:kreate_ios/services/connect/connect_controller.dart';
+import 'package:kreate_ios/services/connect/connect_host.dart';
+import 'package:kreate_ios/services/connect/connect_protocol.dart';
+import 'package:kreate_ios/services/playback_log_service.dart';
+import 'package:kreate_ios/services/storage_service.dart';
+import 'package:kreate_ios/ui/theme/app_theme.dart';
+import 'package:kreate_ios/ui/widgets/player_sheet.dart';
+import 'package:video_player_media_kit/video_player_media_kit.dart';
+
+import 'desktop_shell.dart';
+
+/// Totorify for a computer (Windows, Linux).
+///
+/// It is the phone app in a frame made for a window, a mouse and a
+/// keyboard: its screens, its player, its library and what the devices say
+/// to each other all come from the phone app's package, which this project
+/// depends on. Here are only the start-up, the frame (a menu at the side, a
+/// player bar at the foot) and what a computer does differently.
+void main() {
+  runZonedGuarded(_start, (error, stack) {
+    PlaybackLogService.instance.error('ZONE', error, stack);
+  });
+}
+
+Future<void> _start() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final log = PlaybackLogService.instance;
+  FlutterError.onError = (details) {
+    // A cover that fails to load is noise, not a bug: one line, no stack.
+    if (details.library == 'image resource service') {
+      log.log('IMG', details.exceptionAsString());
+    } else {
+      log.error('FLUTTER', details.exceptionAsString(), details.stack);
+    }
+    if (kDebugMode) FlutterError.presentError(details);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    log.error('ASYNC', error, stack);
+    return true;
+  };
+  final printToConsole = debugPrint;
+  debugPrint = (String? message, {int? wrapWidth}) {
+    if (message != null && message.isNotEmpty) log.log('DBG', message);
+    if (kDebugMode) printToConsole(message, wrapWidth: wrapWidth);
+  };
+
+  // The player the phone app uses has no implementation for a computer:
+  // this one takes its place, and the rest of the code does not notice.
+  VideoPlayerMediaKit.ensureInitialized(windows: true, linux: true);
+
+  await log.init();
+  await StorageService.instance.init();
+  log.log('INIT', 'storage pronto');
+
+  // Signing in with Google is not there on a computer; the account is
+  // optional everywhere.
+  unawaited(AuthService.instance.init());
+  // A Canvas is a vertical video made for a phone's screen.
+  CanvasService.instance.isCanvasEnabledNotifier.value = false;
+
+  // The bar at the foot of the window is the player: choosing a song does
+  // not cover the page with the full one.
+  PlayerSheet.opensOnPlay = false;
+
+  // No system service to hand the player to: it lives with the window.
+  final handler = AudioPlayerHandler();
+  phone.audioHandler = handler;
+  await handler.setOutputVolume(StorageService.instance.outputVolume);
+
+  // The other devices running Totorify can play instead of this one, and
+  // this one for them: it is found on the network, and plays for a device
+  // only after the user said yes to it. A computer that has never been
+  // asked starts with this on: a laptop taken elsewhere still asks first.
+  ConnectHost.kind = ConnectDevice.kindComputer;
+  ConnectHost.keepsLibrary = true;
+  ConnectHost.defaultName = _computerName();
+  if (!StorageService.instance.receivesPlaybackWasChosen) {
+    await StorageService.instance.setReceivesPlayback(true);
+  }
+  ConnectController.instance.attach(handler, name: ConnectHost.deviceName);
+  ConnectHost.instance.attach(handler);
+  unawaited(ConnectHost.instance.apply());
+
+  log.log('INIT', 'Totorify per computer pronto come "${ConnectHost.deviceName}"');
+  runApp(TotorifyDesktopApp(handler: handler));
+}
+
+String _computerName() {
+  try {
+    final name = Platform.localHostname.trim();
+    if (name.isNotEmpty) return name;
+  } catch (e) {
+    debugPrint('main._computerName: $e');
+  }
+  return 'Computer';
+}
+
+class TotorifyDesktopApp extends StatefulWidget {
+  const TotorifyDesktopApp({super.key, required this.handler});
+
+  final AudioPlayerHandler handler;
+
+  @override
+  State<TotorifyDesktopApp> createState() => _TotorifyDesktopAppState();
+}
+
+class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
+  bool _isAmoled = StorageService.instance.isAmoledTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Color>(
+      valueListenable: StorageService.instance.accentColorNotifier,
+      builder: (context, accent, _) => MaterialApp(
+        title: 'Totorify',
+        debugShowCheckedModeBanner: false,
+        scrollBehavior: const _DesktopScrolling(),
+        theme: AppTheme.getTheme(isAmoled: _isAmoled, customAccent: accent),
+        home: DesktopShell(
+          handler: widget.handler,
+          onThemeChanged: () => setState(() => _isAmoled = StorageService.instance.isAmoledTheme),
+        ),
+      ),
+    );
+  }
+}
+
+/// Rows of covers are made to be dragged with a finger: with a mouse they
+/// are dragged too, besides scrolling with the wheel.
+class _DesktopScrolling extends MaterialScrollBehavior {
+  const _DesktopScrolling();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => const {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus,
+  };
+}

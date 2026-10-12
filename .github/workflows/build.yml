@@ -1,0 +1,118 @@
+name: Build Totorify for Windows and Linux
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Nothing here needs to write to the repository, and no secret is used.
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this project
+        uses: actions/checkout@v4
+        with:
+          path: totorify-desktop
+          persist-credentials: false
+
+      # The phone app is the library this project is built on: it is expected
+      # next to it, as on the computer it is developed on.
+      - name: Checkout the phone app
+        uses: actions/checkout@v4
+        with:
+          repository: ProfSasy/totorify
+          path: kreate-ios
+          persist-credentials: false
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: totorify-desktop
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: totorify-desktop
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Build
+        working-directory: totorify-desktop
+        shell: bash
+        run: flutter build windows --release --dart-define=GIT_SHA=${GITHUB_SHA::7}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Totorify-Windows
+          path: totorify-desktop/build/windows/x64/runner/Release
+          retention-days: 30
+
+  linux:
+    # Two builds: the library that plays (libmpv) changed its name between
+    # these two generations of distributions, and a program built for one
+    # does not start on the other.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            mpv: libmpv1
+          - os: ubuntu-24.04
+            mpv: libmpv2
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - name: Checkout this project
+        uses: actions/checkout@v4
+        with:
+          path: totorify-desktop
+          persist-credentials: false
+
+      - name: Checkout the phone app
+        uses: actions/checkout@v4
+        with:
+          repository: ProfSasy/totorify
+          path: kreate-ios
+          persist-credentials: false
+
+      - name: Install what the build needs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+            libmpv-dev mpv libsecret-1-dev libjsoncpp-dev
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: totorify-desktop
+        run: flutter pub get
+
+      - name: Build
+        working-directory: totorify-desktop
+        run: flutter build linux --release --dart-define=GIT_SHA=${GITHUB_SHA::7}
+
+      # An archive, so that the program keeps its permission to run.
+      - name: Package
+        working-directory: totorify-desktop/build/linux/x64/release
+        run: |
+          mv bundle totorify
+          tar -czf "$GITHUB_WORKSPACE/Totorify-Linux-${{ matrix.mpv }}.tar.gz" totorify
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Totorify-Linux-${{ matrix.mpv }}
+          path: Totorify-Linux-${{ matrix.mpv }}.tar.gz
+          retention-days: 30
