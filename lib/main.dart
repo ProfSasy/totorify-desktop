@@ -14,18 +14,18 @@ import 'package:kreate_ios/services/connect/connect_protocol.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
 import 'package:kreate_ios/services/storage_service.dart';
 import 'package:kreate_ios/ui/theme/app_theme.dart';
-import 'package:kreate_ios/ui/widgets/player_sheet.dart';
 import 'package:video_player_media_kit/video_player_media_kit.dart';
 
-import 'desktop_shell.dart';
+import 'desk/desk.dart';
+import 'desk/desk_shell.dart';
 
 /// Totorify for a computer (Windows, Linux).
 ///
-/// It is the phone app in a frame made for a window, a mouse and a
-/// keyboard: its screens, its player, its library and what the devices say
-/// to each other all come from the phone app's package, which this project
-/// depends on. Here are only the start-up, the frame (a menu at the side, a
-/// player bar at the foot) and what a computer does differently.
+/// The player, the catalog, the library and what the devices say to each
+/// other are the phone app's package, which this project depends on. The
+/// screens are its own (`desk/`), made for a window, a mouse and a
+/// keyboard: the library at the side, the page in the middle, the player
+/// at the foot.
 void main() {
   runZonedGuarded(_start, (error, stack) {
     PlaybackLogService.instance.error('ZONE', error, stack);
@@ -68,13 +68,10 @@ Future<void> _start() async {
   // A Canvas is a vertical video made for a phone's screen.
   CanvasService.instance.isCanvasEnabledNotifier.value = false;
 
-  // The bar at the foot of the window is the player: choosing a song does
-  // not cover the page with the full one.
-  PlayerSheet.opensOnPlay = false;
-
   // No system service to hand the player to: it lives with the window.
   final handler = AudioPlayerHandler();
   phone.audioHandler = handler;
+  Desk.handler = handler;
   await handler.setOutputVolume(StorageService.instance.outputVolume);
 
   // The other devices running Totorify can play instead of this one, and
@@ -92,7 +89,7 @@ Future<void> _start() async {
   unawaited(ConnectHost.instance.apply());
 
   log.log('INIT', 'Totorify per computer pronto come "${ConnectHost.deviceName}"');
-  runApp(TotorifyDesktopApp(handler: handler));
+  runApp(const TotorifyDesktopApp());
 }
 
 String _computerName() {
@@ -106,9 +103,7 @@ String _computerName() {
 }
 
 class TotorifyDesktopApp extends StatefulWidget {
-  const TotorifyDesktopApp({super.key, required this.handler});
-
-  final AudioPlayerHandler handler;
+  const TotorifyDesktopApp({super.key});
 
   @override
   State<TotorifyDesktopApp> createState() => _TotorifyDesktopAppState();
@@ -124,10 +119,10 @@ class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
       builder: (context, accent, _) => MaterialApp(
         title: 'Totorify',
         debugShowCheckedModeBanner: false,
+        scaffoldMessengerKey: Desk.messenger,
         scrollBehavior: const _DesktopScrolling(),
         theme: AppTheme.getTheme(isAmoled: _isAmoled, customAccent: accent),
-        home: DesktopShell(
-          handler: widget.handler,
+        home: DeskShell(
           onThemeChanged: () => setState(() => _isAmoled = StorageService.instance.isAmoledTheme),
         ),
       ),
