@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// The look of the computer app, in one place: its colors and measures,
 /// its icons, its theme, and the small pieces every screen is made of.
@@ -119,63 +118,66 @@ class Tk {
 
 /// The icons of the computer app: thin outlines, filled when the thing is
 /// on or is where one is.
+///
+/// They are glyphs of the Phosphor icon fonts (MIT license), which come
+/// with the app in `assets/fonts`: the numbers are theirs.
 class Ic {
   Ic._();
 
-  static const IconData home = PhosphorIconsRegular.house;
-  static const IconData homeOn = PhosphorIconsFill.house;
-  static const IconData search = PhosphorIconsRegular.magnifyingGlass;
-  static const IconData searchBold = PhosphorIconsBold.magnifyingGlass;
-  static const IconData browse = PhosphorIconsRegular.squaresFour;
-  static const IconData browseOn = PhosphorIconsFill.squaresFour;
-  static const IconData library = PhosphorIconsRegular.books;
-  static const IconData libraryOn = PhosphorIconsFill.books;
-  static const IconData plus = PhosphorIconsBold.plus;
-  static const IconData back = PhosphorIconsBold.caretLeft;
-  static const IconData forward = PhosphorIconsBold.caretRight;
-  static const IconData down = PhosphorIconsBold.caretDown;
-  static const IconData close = PhosphorIconsBold.x;
-  static const IconData more = PhosphorIconsBold.dotsThree;
-  static const IconData settings = PhosphorIconsRegular.gear;
-  static const IconData user = PhosphorIconsRegular.user;
+  static const IconData home = IconData(0xe2c2, fontFamily: 'PhosphorRegular');
+  static const IconData homeOn = IconData(0xe2c2, fontFamily: 'PhosphorFill');
+  static const IconData search = IconData(0xe30c, fontFamily: 'PhosphorRegular');
+  static const IconData searchBold = IconData(0xe30c, fontFamily: 'PhosphorBold');
+  static const IconData browse = IconData(0xe464, fontFamily: 'PhosphorRegular');
+  static const IconData browseOn = IconData(0xe464, fontFamily: 'PhosphorFill');
+  static const IconData library = IconData(0xe758, fontFamily: 'PhosphorRegular');
+  static const IconData libraryOn = IconData(0xe758, fontFamily: 'PhosphorFill');
+  static const IconData plus = IconData(0xe3d4, fontFamily: 'PhosphorBold');
+  static const IconData back = IconData(0xe138, fontFamily: 'PhosphorBold');
+  static const IconData forward = IconData(0xe13a, fontFamily: 'PhosphorBold');
+  static const IconData down = IconData(0xe136, fontFamily: 'PhosphorBold');
+  static const IconData close = IconData(0xe4f6, fontFamily: 'PhosphorBold');
+  static const IconData more = IconData(0xe1fe, fontFamily: 'PhosphorBold');
+  static const IconData settings = IconData(0xe270, fontFamily: 'PhosphorRegular');
+  static const IconData user = IconData(0xe4c2, fontFamily: 'PhosphorRegular');
 
-  static const IconData play = PhosphorIconsFill.play;
-  static const IconData pause = PhosphorIconsFill.pause;
-  static const IconData next = PhosphorIconsFill.skipForward;
-  static const IconData previous = PhosphorIconsFill.skipBack;
-  static const IconData shuffle = PhosphorIconsRegular.shuffle;
-  static const IconData repeat = PhosphorIconsRegular.repeat;
-  static const IconData repeatOne = PhosphorIconsRegular.repeatOnce;
-  static const IconData queue = PhosphorIconsRegular.queue;
-  static const IconData lyrics = PhosphorIconsRegular.microphoneStage;
-  static const IconData nowPlaying = PhosphorIconsRegular.sidebarSimple;
-  static const IconData devices = PhosphorIconsRegular.devices;
-  static const IconData volumeHigh = PhosphorIconsRegular.speakerHigh;
-  static const IconData volumeLow = PhosphorIconsRegular.speakerLow;
-  static const IconData volumeOff = PhosphorIconsRegular.speakerX;
+  static const IconData play = IconData(0xe3d0, fontFamily: 'PhosphorFill');
+  static const IconData pause = IconData(0xe39e, fontFamily: 'PhosphorFill');
+  static const IconData next = IconData(0xe5a6, fontFamily: 'PhosphorFill');
+  static const IconData previous = IconData(0xe5a4, fontFamily: 'PhosphorFill');
+  static const IconData shuffle = IconData(0xe422, fontFamily: 'PhosphorRegular');
+  static const IconData repeat = IconData(0xe3f6, fontFamily: 'PhosphorRegular');
+  static const IconData repeatOne = IconData(0xe3f8, fontFamily: 'PhosphorRegular');
+  static const IconData queue = IconData(0xe6ac, fontFamily: 'PhosphorRegular');
+  static const IconData lyrics = IconData(0xe75c, fontFamily: 'PhosphorRegular');
+  static const IconData nowPlaying = IconData(0xec24, fontFamily: 'PhosphorRegular');
+  static const IconData devices = IconData(0xeba4, fontFamily: 'PhosphorRegular');
+  static const IconData volumeHigh = IconData(0xe44a, fontFamily: 'PhosphorRegular');
+  static const IconData volumeLow = IconData(0xe44c, fontFamily: 'PhosphorRegular');
+  static const IconData volumeOff = IconData(0xe45c, fontFamily: 'PhosphorRegular');
 
-  static const IconData save = PhosphorIconsRegular.plusCircle;
-  static const IconData saved = PhosphorIconsFill.checkCircle;
-  static const IconData heart = PhosphorIconsFill.heart;
-  static const IconData pin = PhosphorIconsFill.pushPin;
-  static const IconData clock = PhosphorIconsRegular.clock;
-  static const IconData history = PhosphorIconsRegular.clockCounterClockwise;
-  static const IconData verified = PhosphorIconsFill.sealCheck;
-  static const IconData note = PhosphorIconsRegular.musicNotes;
-  static const IconData playlist = PhosphorIconsRegular.playlist;
-  static const IconData album = PhosphorIconsRegular.vinylRecord;
-  static const IconData artist = PhosphorIconsRegular.user;
-  static const IconData addToQueue = PhosphorIconsRegular.queue;
-  static const IconData playNext = PhosphorIconsRegular.arrowRight;
-  static const IconData edit = PhosphorIconsRegular.pencilSimple;
-  static const IconData trash = PhosphorIconsRegular.trash;
-  static const IconData link = PhosphorIconsRegular.linkSimple;
-  static const IconData check = PhosphorIconsBold.check;
-  static const IconData computer = PhosphorIconsRegular.laptop;
-  static const IconData phone = PhosphorIconsRegular.deviceMobile;
-  static const IconData tv = PhosphorIconsRegular.television;
-  static const IconData folder = PhosphorIconsRegular.folderOpen;
-  static const IconData info = PhosphorIconsRegular.info;
+  static const IconData save = IconData(0xe3d6, fontFamily: 'PhosphorRegular');
+  static const IconData saved = IconData(0xe184, fontFamily: 'PhosphorFill');
+  static const IconData heart = IconData(0xe2a8, fontFamily: 'PhosphorFill');
+  static const IconData pin = IconData(0xe3e2, fontFamily: 'PhosphorFill');
+  static const IconData clock = IconData(0xe19a, fontFamily: 'PhosphorRegular');
+  static const IconData history = IconData(0xe1a0, fontFamily: 'PhosphorRegular');
+  static const IconData verified = IconData(0xe606, fontFamily: 'PhosphorFill');
+  static const IconData note = IconData(0xe340, fontFamily: 'PhosphorRegular');
+  static const IconData playlist = IconData(0xe6aa, fontFamily: 'PhosphorRegular');
+  static const IconData album = IconData(0xecac, fontFamily: 'PhosphorRegular');
+  static const IconData artist = IconData(0xe4c2, fontFamily: 'PhosphorRegular');
+  static const IconData addToQueue = IconData(0xe6ac, fontFamily: 'PhosphorRegular');
+  static const IconData playNext = IconData(0xe06c, fontFamily: 'PhosphorRegular');
+  static const IconData edit = IconData(0xe3b4, fontFamily: 'PhosphorRegular');
+  static const IconData trash = IconData(0xe4a6, fontFamily: 'PhosphorRegular');
+  static const IconData link = IconData(0xe2e6, fontFamily: 'PhosphorRegular');
+  static const IconData check = IconData(0xe182, fontFamily: 'PhosphorBold');
+  static const IconData computer = IconData(0xe586, fontFamily: 'PhosphorRegular');
+  static const IconData phone = IconData(0xe1e0, fontFamily: 'PhosphorRegular');
+  static const IconData tv = IconData(0xe754, fontFamily: 'PhosphorRegular');
+  static const IconData folder = IconData(0xe256, fontFamily: 'PhosphorRegular');
+  static const IconData info = IconData(0xe2ce, fontFamily: 'PhosphorRegular');
 }
 
 /// Builds with whether the mouse is over it.

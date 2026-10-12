@@ -24,7 +24,6 @@ dependencies:
   video_player_media_kit: ^1.0.5
   media_kit_libs_windows_video: ^1.0.9
   media_kit_libs_linux: ^1.1.3
-  phosphor_flutter: ^2.1.0
   window_manager: ^0.5.2
 
 dev_dependencies:
@@ -56,3 +55,15 @@ flutter:
           weight: 800
         - asset: assets/fonts/Figtree-900.ttf
           weight: 900
+
+    # The icons (Phosphor Icons, MIT license, see
+    # assets/fonts/Phosphor-LICENSE.txt): outlines, filled, bold.
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/fonts/Phosphor.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/Phosphor-Fill.ttf
+    - family: PhosphorBold
+      fonts:
+        - asset: assets/fonts/Phosphor-Bold.ttf
