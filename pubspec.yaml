@@ -1,7 +1,7 @@
 name: totorify_desktop
 description: "Totorify per Windows e Linux."
 publish_to: 'none'
-version: 0.2.0+2
+version: 0.3.0+3
 
 environment:
   sdk: ^3.11.0
@@ -16,6 +16,9 @@ dependencies:
     path: ../kreate-ios
   audio_service: ^0.18.17
   video_player: ^2.9.2
+  # The pictures drawn large behind the pages (the phone app's covers use
+  # it too).
+  cached_network_image: ^3.4.1
   # video_player has no implementation for Windows and Linux: this one
   # plays through libmpv.
   video_player_media_kit: ^1.0.5
@@ -29,3 +32,21 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # The typeface of the computer app (SIL Open Font License, see
+  # assets/fonts/OFL.txt): the phone uses the one of its system.
+  fonts:
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree-400.ttf
+          weight: 400
+        - asset: assets/fonts/Figtree-500.ttf
+          weight: 500
+        - asset: assets/fonts/Figtree-600.ttf
+          weight: 600
+        - asset: assets/fonts/Figtree-700.ttf
+          weight: 700
+        - asset: assets/fonts/Figtree-800.ttf
+          weight: 800
+        - asset: assets/fonts/Figtree-900.ttf
+          weight: 900

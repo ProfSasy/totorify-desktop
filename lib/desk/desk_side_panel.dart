@@ -8,6 +8,7 @@ import 'package:kreate_ios/services/connect/connect_controller.dart';
 import 'package:kreate_ios/services/connect/connect_protocol.dart';
 import 'package:kreate_ios/services/lyrics_service.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
+import 'package:kreate_ios/ui/theme/app_ambience.dart';
 import 'package:kreate_ios/ui/theme/app_icons.dart';
 import 'package:kreate_ios/ui/widgets/app_cover.dart';
 
@@ -258,6 +259,27 @@ class _LyricsViewState extends State<_LyricsView> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AmbientTint(
+      artworkUrl: Desk.handler.mediaItem.value?.artUri?.toString(),
+      fallback: cs.primary,
+      builder: (context, palette) => Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.lerp(palette.surface, Desk.panel, 0.25)!,
+              Color.lerp(palette.deep, Desk.panel, 0.5)!,
+            ],
+          ),
+        ),
+        child: _text(context),
+      ),
+    );
+  }
+
+  Widget _text(BuildContext context) {
     if (_songId == null) return const _Hint('Il testo compare qui mentre un brano suona.');
     if (_loading) return const DeskMessage();
     final lyrics = _lyrics;

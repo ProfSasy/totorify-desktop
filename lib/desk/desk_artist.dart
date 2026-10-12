@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kreate_ios/models/album.dart';
 import 'package:kreate_ios/models/artist.dart';
@@ -181,64 +182,74 @@ class _DeskArtistPageState extends State<DeskArtistPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Who it is ──────────────────────────────────────────────────
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(24, 56, 24, 24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [palette.surface, Color.lerp(palette.surface, Desk.panel, 0.55)!],
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            // ── Who it is: the picture across the page, the name on it ────
+            SizedBox(
+              height: 340,
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black54, blurRadius: 30, offset: Offset(0, 10)),
-                      ],
+                  ColoredBox(color: palette.surface),
+                  if (artist.imageUrl.isNotEmpty)
+                    CachedNetworkImage(
+                      imageUrl: artist.imageUrl,
+                      fit: BoxFit.cover,
+                      alignment: const Alignment(0, -0.5),
+                      errorWidget: (_, _, _) => const SizedBox.shrink(),
                     ),
-                    child: AppCover(
-                      url: artist.imageUrl,
-                      size: 190,
-                      circle: true,
-                      icon: AppIcons.artist,
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x26000000), Color(0x8C000000), Desk.panel],
+                        stops: [0, 0.6, 1],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  Expanded(
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 22),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Artista',
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                        Row(
+                          children: [
+                            Icon(AppIcons.verified, size: 20, color: palette.accent),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'ARTISTA',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.8,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 4),
                         Text(
                           artist.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: artist.name.length <= 14 ? 76 : 52,
+                            fontSize: artist.name.length <= 14 ? 88 : 58,
                             fontWeight: FontWeight.w900,
-                            height: 1.05,
-                            letterSpacing: -2,
+                            height: 1,
+                            letterSpacing: -3,
                             color: Colors.white,
+                            shadows: const [Shadow(color: Colors.black54, blurRadius: 24)],
                           ),
                         ),
                         if (artist.audience.isNotEmpty) ...[
                           const SizedBox(height: 10),
                           Text(
                             artist.audience,
-                            style: const TextStyle(fontSize: 14.5, color: Colors.white),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ],

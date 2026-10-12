@@ -35,6 +35,9 @@ class Desk {
   static const Color raised = Color(0xFF1F1F1F);
   static const Color hover = Color(0xFF2A2A2A);
   static const double gap = 8;
+
+  /// The typeface of the computer app.
+  static const String font = 'Figtree';
   static const double radius = 10;
 
   static void toggleSide(DeskSide which) => side.value = side.value == which ? null : which;

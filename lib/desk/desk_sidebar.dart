@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kreate_ios/services/storage_service.dart';
 import 'package:kreate_ios/ui/theme/app_icons.dart';
-import 'package:kreate_ios/ui/widgets/app_cover.dart';
 import 'package:kreate_ios/ui/widgets/song_options_sheet.dart' show playlistCoverUrl;
 
 import 'desk.dart';
+import 'desk_art.dart';
 import 'desk_artist.dart';
 import 'desk_collection.dart';
 import 'desk_menus.dart';
@@ -85,10 +85,10 @@ class _DeskSidebarState extends State<DeskSidebar> {
                     title: playlist.title,
                     subtitle:
                         'Playlist • ${Desk.whose(playlist.id) ?? Desk.songs(playlist.songs.length)}',
-                    cover: AppCover(
+                    cover: DeskCover(
                       url: playlistCoverUrl(playlist),
+                      seed: playlist.title,
                       size: 48,
-                      icon: AppIcons.playlist,
                     ),
                     onOpen: () => DeskCollectionPage.openPlaylist(playlist.id),
                     onMenu: (at) => deskPlaylistMenu(context, at, playlist),
@@ -99,11 +99,11 @@ class _DeskSidebarState extends State<DeskSidebar> {
                   _Item(
                     title: artist.name,
                     subtitle: 'Artista',
-                    cover: AppCover(
+                    cover: DeskCover(
                       url: artist.imageUrl,
+                      seed: artist.name,
                       size: 48,
-                      circle: true,
-                      icon: AppIcons.artist,
+                      round: true,
                     ),
                     onOpen: () => Desk.nav.open(DeskArtistPage(artist: artist)),
                   ),

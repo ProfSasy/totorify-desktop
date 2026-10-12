@@ -10,10 +10,10 @@ import 'package:kreate_ios/services/storage_service.dart';
 import 'package:kreate_ios/services/ytmusic_catalog_service.dart';
 import 'package:kreate_ios/ui/theme/app_ambience.dart';
 import 'package:kreate_ios/ui/theme/app_icons.dart';
-import 'package:kreate_ios/ui/widgets/app_cover.dart';
 import 'package:kreate_ios/ui/widgets/song_options_sheet.dart' show playlistCoverUrl;
 
 import 'desk.dart';
+import 'desk_art.dart';
 import 'desk_menus.dart';
 import 'desk_widgets.dart';
 
@@ -331,12 +331,7 @@ class _CollectionView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                       child:
                           collection.cover?.call(200) ??
-                          AppCover(
-                            url: collection.coverUrl,
-                            size: 200,
-                            radius: 0,
-                            icon: AppIcons.playlist,
-                          ),
+                          DeskCover(url: collection.coverUrl, seed: collection.title, size: 200),
                     ),
                   ),
                   const SizedBox(width: 24),

@@ -112,6 +112,27 @@ class TotorifyDesktopApp extends StatefulWidget {
 class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
   bool _isAmoled = StorageService.instance.isAmoledTheme;
 
+  /// The phone app's colors, in the typeface of the computer app.
+  ThemeData _theme(Color accent) {
+    final base = AppTheme.getTheme(isAmoled: _isAmoled, customAccent: accent);
+    return base.copyWith(
+      textTheme: base.textTheme.apply(fontFamily: Desk.font),
+      primaryTextTheme: base.primaryTextTheme.apply(fontFamily: Desk.font),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: const Color(0xFF2A2A2A),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: Desk.font,
+          fontSize: 12.5,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Color>(
@@ -121,7 +142,7 @@ class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
         debugShowCheckedModeBanner: false,
         scaffoldMessengerKey: Desk.messenger,
         scrollBehavior: const _DesktopScrolling(),
-        theme: AppTheme.getTheme(isAmoled: _isAmoled, customAccent: accent),
+        theme: _theme(accent),
         home: DeskShell(
           onThemeChanged: () => setState(() => _isAmoled = StorageService.instance.isAmoledTheme),
         ),
