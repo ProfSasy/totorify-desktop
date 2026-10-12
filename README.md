@@ -1,62 +1,68 @@
 # Totorify per computer
 
-Totorify per Windows e Linux: un'app fatta per una finestra, il mouse e la
-tastiera. La libreria sta sempre a sinistra, la pagina al centro, il player
-in fondo, e a destra si aprono la coda, il testo e i dispositivi.
+Totorify per Windows e Linux: un'app scritta per il computer, con una
+finestra, il mouse e la tastiera. La finestra non ha la barra del titolo del
+sistema: la barra in alto la sposta e porta i pulsanti per ridurla,
+ingrandirla e chiuderla, insieme alla ricerca. La libreria sta sempre a
+sinistra, la pagina al centro, il player in fondo, e a destra si aprono la
+vista "In riproduzione", la coda e i dispositivi.
 
-Non è una copia dell'app del telefono. Usa l'app del telefono
+Dell'app del telefono
 ([ProfSasy/totorify](https://github.com/ProfSasy/totorify), pacchetto
-`kreate_ios`) come libreria per tutto quello che non si vede: il player, il
-catalogo, la libreria, i testi e il protocollo con cui i dispositivi si
-parlano. Le schermate sono sue, in `lib/desk/`:
+`kreate_ios`) usa solo quello che non si vede: il player, il catalogo, la
+libreria, i testi e il protocollo con cui i dispositivi si parlano. Tutto
+quello che si vede è suo, in `lib/ui/`:
 
-- `desk_shell.dart` — la finestra: barra in alto, libreria, pagina, pannello
-  a destra, player; i tasti che comandano;
-- `desk_top_bar.dart` — indietro e avanti tra le pagine aperte, Home, il
-  campo di ricerca, le impostazioni;
-- `desk_sidebar.dart` — la libreria: preferiti, playlist, artisti; si riduce
-  alle sole copertine;
-- `desk_home.dart`, `desk_search.dart`, `desk_collection.dart`,
-  `desk_artist.dart` — le pagine: Home, ricerca, playlist e album con la
-  tabella dei brani, artista;
-- `desk_player_bar.dart` — il player: brano, comandi, avanzamento, volume;
-- `desk_side_panel.dart` — coda, testo sincronizzato, dispositivi;
-- `desk_menus.dart`, `desk_widgets.dart`, `desk.dart` — i menu del tasto
-  destro, le schede e le righe dei brani, e quello che le pagine hanno in
-  comune.
+- `kit.dart` — colori, misure, icone e tema, e i pezzi piccoli di cui sono
+  fatte le pagine (pulsanti, copertine, avvisi);
+- `app.dart` — quello che ogni parte della finestra usa: il player, le
+  pagine aperte con il loro indietro e avanti, la ricerca, la vista a destra;
+- `widgets.dart`, `menus.dart` — schede, righe dei brani, menu del tasto
+  destro, finestre di dialogo;
+- `shell/` — la finestra: `title_bar.dart` (barra in alto), `library.dart`
+  (la tua libreria), `side_view.dart` (in riproduzione, coda, dispositivi),
+  `player_bar.dart` (il player), `shell.dart` (come stanno insieme, i tasti);
+- `pages/` — le pagine: `home.dart`, `search.dart`, `collection.dart`
+  (playlist e album, con la tabella dei brani), `artist.dart`, `lyrics.dart`,
+  `settings.dart`.
 
 `lib/main.dart` è l'avvio; `windows/` e `linux/` sono la finestra, il nome e
 l'icona su ciascun sistema.
 
 ## Come si usa
 
-- **Per muoversi**: le frecce in alto (o Alt + freccia, o i tasti laterali
-  del mouse) tornano indietro e avanti tra le pagine aperte, ognuna com'era.
+- **Per muoversi**: le frecce in alto a sinistra (o Alt + freccia, o i tasti
+  laterali del mouse) tornano indietro e avanti tra le pagine aperte, ognuna
+  com'era. La casa porta alla Home.
 - **Per cercare**: si scrive nel campo in alto (Ctrl + K ci porta il
-  cursore) e i risultati arrivano mentre si scrive.
+  cursore) e i risultati arrivano mentre si scrive; il pulsante accanto apre
+  "Sfoglia tutto".
 - **Per ascoltare**: doppio click su un brano, o il pulsante verde di una
   playlist, di un album, di un artista. La pagina resta dov'è.
-- **Tasto destro** su un brano: riproduci come prossimo, aggiungi in coda,
-  salva nei preferiti, aggiungi a una playlist, vai all'artista. Su una
-  playlist della libreria: rinomina, elimina.
-- **Il "+" della libreria** crea una playlist o ne importa una da un link di
-  Spotify o di YouTube Music.
-- **In basso a destra**: il testo (cliccando un verso si salta lì), la coda,
-  i dispositivi, il volume.
+- **Tasto destro** su un brano: aggiungi alla playlist, salva in Brani che ti
+  piacciono, aggiungi in coda, riproduci subito dopo, vai all'artista. Su una
+  playlist della libreria: modifica nome, elimina.
+- **"Crea"**, nella libreria, crea una playlist o ne importa una da un link
+  di Spotify o di YouTube Music. La libreria si comprime alle sole copertine
+  cliccando sul suo nome.
+- **In basso a destra**: la vista "In riproduzione", i testi a tutta pagina
+  (cliccando un verso si salta lì), la coda, i dispositivi, il volume.
 - **La barra spaziatrice** mette in pausa e riprende, quando non si sta
   scrivendo; i tasti multimediali funzionano mentre la finestra è attiva.
+- **Le impostazioni** (l'ingranaggio in alto a destra) sono una pagina:
+  qualità audio, colore, dispositivi, libreria.
 
 ## Con gli altri dispositivi
 
 Il computer è un dispositivo come gli altri, sulla stessa rete Wi-Fi o via
 cavo:
 
-- **manda la sua musica altrove**: l'icona dei dispositivi nel player
+- **manda la sua musica altrove**: "Connetti a un dispositivo", nel player,
   elenca le TV, i telefoni e i computer con Totorify aperto; la musica
   continua lì dal punto in cui era, e da qui la si comanda;
 - **suona per gli altri**: compare nella lista dei dispositivi del telefono.
-  Prima di suonare chiede conferma a chi è al computer ("consenti sempre",
-  "solo questa volta", "rifiuta"), perché un portatile finisce anche su reti
+  Prima di suonare chiede conferma a chi è al computer ("Consenti sempre",
+  "Solo questa volta", "Rifiuta"), perché un portatile finisce anche su reti
   che non sono di casa. Si spegne da Impostazioni → Dispositivi, dove si
   sceglie anche il nome con cui il computer si presenta;
 - **la libreria**: quella del computer resta sua; accanto compare quella del
@@ -64,7 +70,8 @@ cavo:
 
 La prima volta Windows chiede se consentire a Totorify di comunicare sulla
 rete: va consentito sulle reti private, altrimenti gli altri dispositivi non
-lo trovano. Con una VPN attiva il computer può non vedere la rete di casa.
+lo trovano. Con una VPN attiva il computer può non vedere la rete di casa, e
+sulle reti pubbliche (università, hotel) i dispositivi non si vedono tra loro.
 
 ## Dove tiene i dati
 
@@ -111,7 +118,7 @@ libasound2-dev`.
 - i Canvas (video verticali pensati per lo schermo del telefono) e i brani
   scaricati per l'ascolto senza rete;
 - il timer di spegnimento e la scelta di una fonte audio alternativa;
-- l'accesso con Google, che su computer non esiste e che è facoltativo
-  ovunque; su Linux l'accesso a Spotify si fa incollando il cookie;
+- l'accesso con un account (Google, Spotify): su computer la libreria è
+  quella del computer, più quella del telefono che si collega;
 - i comandi nel riquadro multimediale del sistema: per ora la musica si
   comanda dalla finestra.

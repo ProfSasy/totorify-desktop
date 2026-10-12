@@ -13,19 +13,19 @@ import 'package:kreate_ios/services/connect/connect_host.dart';
 import 'package:kreate_ios/services/connect/connect_protocol.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
 import 'package:kreate_ios/services/storage_service.dart';
-import 'package:kreate_ios/ui/theme/app_theme.dart';
 import 'package:video_player_media_kit/video_player_media_kit.dart';
+import 'package:window_manager/window_manager.dart';
 
-import 'desk/desk.dart';
-import 'desk/desk_shell.dart';
+import 'ui/app.dart';
+import 'ui/kit.dart';
+import 'ui/shell/shell.dart';
 
 /// Totorify for a computer (Windows, Linux).
 ///
 /// The player, the catalog, the library and what the devices say to each
-/// other are the phone app's package, which this project depends on. The
-/// screens are its own (`desk/`), made for a window, a mouse and a
-/// keyboard: the library at the side, the page in the middle, the player
-/// at the foot.
+/// other are the phone app's package, which this project depends on. What
+/// is seen is its own (`ui/`), made for a window, a mouse and a keyboard:
+/// the library at the side, the page in the middle, the player at the foot.
 void main() {
   runZonedGuarded(_start, (error, stack) {
     PlaybackLogService.instance.error('ZONE', error, stack);
@@ -54,6 +54,12 @@ Future<void> _start() async {
     if (kDebugMode) printToConsole(message, wrapWidth: wrapWidth);
   };
 
+  // The window has no title bar of the system: the top bar of the app is
+  // the one that moves it and carries its buttons.
+  await windowManager.ensureInitialized();
+  await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+  await windowManager.setMinimumSize(const Size(940, 600));
+
   // The logo on black, at once: it is what the window shows while the app
   // gets ready, and for a moment after, so that it is seen and not flashed.
   runApp(const _Splash());
@@ -76,7 +82,7 @@ Future<void> _start() async {
   // No system service to hand the player to: it lives with the window.
   final handler = AudioPlayerHandler();
   phone.audioHandler = handler;
-  Desk.handler = handler;
+  App.player = handler;
   await handler.setOutputVolume(StorageService.instance.outputVolume);
 
   // The other devices running Totorify can play instead of this one, and
@@ -146,29 +152,6 @@ class TotorifyDesktopApp extends StatefulWidget {
 }
 
 class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
-  bool _isAmoled = StorageService.instance.isAmoledTheme;
-
-  /// The phone app's colors, in the typeface of the computer app.
-  ThemeData _theme(Color accent) {
-    final base = AppTheme.getTheme(isAmoled: _isAmoled, customAccent: accent);
-    return base.copyWith(
-      textTheme: base.textTheme.apply(fontFamily: Desk.font),
-      primaryTextTheme: base.primaryTextTheme.apply(fontFamily: Desk.font),
-      tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        textStyle: const TextStyle(
-          fontFamily: Desk.font,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Color>(
@@ -176,12 +159,10 @@ class _TotorifyDesktopAppState extends State<TotorifyDesktopApp> {
       builder: (context, accent, _) => MaterialApp(
         title: 'Totorify',
         debugShowCheckedModeBanner: false,
-        scaffoldMessengerKey: Desk.messenger,
+        scaffoldMessengerKey: App.messenger,
         scrollBehavior: const _DesktopScrolling(),
-        theme: _theme(accent),
-        home: DeskShell(
-          onThemeChanged: () => setState(() => _isAmoled = StorageService.instance.isAmoledTheme),
-        ),
+        theme: Tk.theme(accent),
+        home: const Shell(),
       ),
     );
   }
