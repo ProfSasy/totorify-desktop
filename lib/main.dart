@@ -130,16 +130,8 @@ class _Splash extends StatelessWidget {
             opacity: shown,
             child: Transform.scale(scale: 0.94 + 0.06 * shown, child: child),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
-              'assets/images/totorify_logo.png',
-              package: 'kreate_ios',
-              width: 132,
-              height: 132,
-              fit: BoxFit.cover,
-            ),
-          ),
+          // The icon of the app: its white mark, on the black of the window.
+          child: Image.asset('assets/images/logo.png', width: 168, height: 168),
         ),
       ),
     ),
