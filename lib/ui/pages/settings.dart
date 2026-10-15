@@ -6,6 +6,7 @@ import 'package:kreate_ios/services/app_settings.dart';
 import 'package:kreate_ios/services/connect/connect_host.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
 import 'package:kreate_ios/services/storage_service.dart';
+import 'package:kreate_ios/services/ytmusic_service.dart';
 import 'package:kreate_ios/ui/theme/app_theme.dart' show AppTheme;
 
 import '../app.dart';
@@ -18,7 +19,7 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   /// Kept the same as the version in pubspec.yaml.
-  static const String version = '1.1.0';
+  static const String version = '1.2.0';
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -85,14 +86,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   const _Heading('Qualità audio'),
                   _Row(
                     'Qualità dello streaming',
-                    detail: 'Alta: audio migliore, più dati. Normale: meno dati.',
+                    detail:
+                        'Alta: Opus a circa 130 kbps, il formato migliore che YouTube offre. '
+                        'Normale: circa 50 kbps, meno dati.',
                     control: _Switch(
                       value: _storage.isHighQuality,
                       onChanged: (value) async {
                         _log('qualità alta = $value');
                         await _storage.setHighQuality(value);
+                        // The streams already looked up were picked with the old setting.
+                        YTMusicService.instance.clearStreamCaches();
                         if (mounted) setState(() {});
                       },
+                    ),
+                  ),
+                  _Row(
+                    'Versione in studio al posto del videoclip',
+                    detail:
+                        'Un brano salvato come videoclip suona dalla registrazione dell\'album, '
+                        'quando YouTube Music ce l\'ha: senza scene parlate, con il mixaggio originale.',
+                    control: _Switch(
+                      value: _prefs.preferStudioAudio.value,
+                      onChanged: (value) => _set(_prefs.preferStudioAudio, value),
                     ),
                   ),
 
