@@ -11,6 +11,8 @@ import 'package:kreate_ios/services/canvas_service.dart';
 import 'package:kreate_ios/services/connect/connect_controller.dart';
 import 'package:kreate_ios/services/connect/connect_host.dart';
 import 'package:kreate_ios/services/connect/connect_protocol.dart';
+import 'package:kreate_ios/services/listening_stats.dart';
+import 'package:kreate_ios/services/session_keeper.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
 import 'package:kreate_ios/services/storage_service.dart';
 import 'package:video_player_media_kit/video_player_media_kit.dart';
@@ -97,6 +99,9 @@ Future<void> _start() async {
   }
   ConnectController.instance.attach(handler, name: ConnectHost.deviceName);
   ConnectHost.instance.attach(handler);
+  // The queue of the last session comes back, paused; listens are counted.
+  await SessionKeeper.instance.attach(handler);
+  await ListeningStats.instance.attach(handler);
   unawaited(ConnectHost.instance.apply());
 
   log.log('INIT', 'Totorify per computer pronto come "${ConnectHost.deviceName}"');

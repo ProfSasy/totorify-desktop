@@ -139,13 +139,21 @@ class _ShellState extends State<Shell> {
                     children: [
                       const Icon(Ic.devices, size: 28, color: Tk.text),
                       const SizedBox(width: 12),
-                      Expanded(child: Text('Richiesta di connessione', style: Tk.title(22))),
+                      Expanded(
+                        child: Text(
+                          asked.listener ? 'Ascoltare insieme?' : 'Richiesta di connessione',
+                          style: Tk.title(22),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    '${asked.name} vuole riprodurre la sua musica su questo computer e '
-                    'controllarla. Quello che stai ascoltando verrà sostituito.',
+                    asked.listener
+                        ? '${asked.name} vuole ascoltare quello che suona su questo computer, '
+                              'in sincrono.'
+                        : '${asked.name} vuole riprodurre la sua musica su questo computer e '
+                              'controllarla. Quello che stai ascoltando verrà sostituito.',
                     style: const TextStyle(fontSize: 14, height: 1.5, color: Tk.subdued),
                   ),
                   const SizedBox(height: 26),

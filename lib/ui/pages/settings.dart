@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:kreate_ios/services/app_folder.dart';
+import 'package:kreate_ios/services/app_settings.dart';
 import 'package:kreate_ios/services/connect/connect_host.dart';
 import 'package:kreate_ios/services/playback_log_service.dart';
 import 'package:kreate_ios/services/storage_service.dart';
@@ -17,7 +18,7 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   /// Kept the same as the version in pubspec.yaml.
-  static const String version = '1.0.0';
+  static const String version = '1.1.0';
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -25,6 +26,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final StorageService _storage = StorageService.instance;
+
+  final AppSettings _prefs = AppSettings.instance;
+
+  Future<void> _set<T>(Setting<T> setting, T value) async {
+    _log('${setting.key} = $value');
+    await setting.set(value);
+    if (mounted) setState(() {});
+  }
 
   void _log(String what) => PlaybackLogService.instance.log('UI', 'impostazioni: $what');
 
@@ -87,42 +96,90 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
 
+                  _Row(
+                    'Normalizza il volume',
+                    detail:
+                        'Abbassa i brani registrati più forte, così suonano tutti allo stesso livello.',
+                    control: _Switch(
+                      value: _prefs.normalizeVolume.value,
+                      onChanged: (value) => _set(_prefs.normalizeVolume, value),
+                    ),
+                  ),
+                  _Row(
+                    'Salta le parti non musicali',
+                    detail:
+                        'Introduzioni parlate e scenette dei video, segnalate dalla comunità di SponsorBlock.',
+                    control: _Switch(
+                      value: _prefs.sponsorBlock.value,
+                      onChanged: (value) => _set(_prefs.sponsorBlock, value),
+                    ),
+                  ),
+                  _Row(
+                    'Dissolvenza tra i brani',
+                    detail: _prefs.crossfadeSeconds.value == 0
+                        ? 'Disattivata'
+                        : '${_prefs.crossfadeSeconds.value} secondi',
+                    control: Wrap(
+                      spacing: 6,
+                      children: [
+                        for (final seconds in const [0, 4, 8, 12])
+                          Pill(
+                            seconds == 0 ? 'No' : '$seconds s',
+                            selected: _prefs.crossfadeSeconds.value == seconds,
+                            onTap: () => _set(_prefs.crossfadeSeconds, seconds),
+                          ),
+                      ],
+                    ),
+                  ),
+                  _Row(
+                    'Ricorda la coda',
+                    detail: 'Alla prossima apertura ritrovi la coda e il punto in cui eri.',
+                    control: _Switch(
+                      value: _prefs.persistentQueue.value,
+                      onChanged: (value) => _set(_prefs.persistentQueue, value),
+                    ),
+                  ),
+
                   const _Heading('Aspetto'),
                   _Row(
                     'Colore di evidenziazione',
                     detail: 'Il colore dei pulsanti e di quello che è attivo.',
-                    control: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (final (name, color) in AppTheme.presetColors)
-                          Tooltip(
-                            message: name,
-                            child: Hover(
-                              cursor: SystemMouseCursors.click,
-                              builder: (context, hovered) => GestureDetector(
-                                onTap: () {
-                                  _log('colore $name');
-                                  _storage.setAccentColor(color);
-                                },
-                                child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  margin: const EdgeInsets.only(left: 8),
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: color.toARGB32() == accent.toARGB32() || hovered
-                                          ? Tk.text
-                                          : Colors.transparent,
-                                      width: 2,
+                    control: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        runSpacing: 8,
+                        children: [
+                          for (final (name, color) in AppTheme.presetColors)
+                            Tooltip(
+                              message: name,
+                              child: Hover(
+                                cursor: SystemMouseCursors.click,
+                                builder: (context, hovered) => GestureDetector(
+                                  onTap: () {
+                                    _log('colore $name');
+                                    _storage.setAccentColor(color);
+                                  },
+                                  child: Container(
+                                    width: 26,
+                                    height: 26,
+                                    margin: const EdgeInsets.only(left: 8),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: color.toARGB32() == accent.toARGB32() || hovered
+                                            ? Tk.text
+                                            : Colors.transparent,
+                                        width: 2,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
